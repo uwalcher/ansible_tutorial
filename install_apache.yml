@@ -1,0 +1,21 @@
+---
+
+- hosts: all
+  become: true
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+  tasks:
+
+  - name: update repository
+    apt:
+      update_cache: yes
+  
+  - name: install apache2 package
+    apt:
+      name: apache2
+      state: latest
+  
+  - name: add php support for apache
+    apt:
+      name: libapache2-mod-php
+      state: latest

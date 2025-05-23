@@ -6,16 +6,13 @@
     ansible_python_interpreter: "{{ ansible_playbook_python }}"
   tasks:
 
-  - name: update repository
-    apt:
+  - name: install apache and php package
+    package:
+      name:
+        - apache2
+        # - "{{ apache_package }}"
+        - libapache2-mod-php
+        # - "{{ php_package }}"
+      state: latest
       update_cache: yes
-  
-  - name: install apache2 package
-    apt:
-      name: apache2
-      state: latest
-  
-  - name: add php support for apache
-    apt:
-      name: libapache2-mod-php
-      state: latest
+

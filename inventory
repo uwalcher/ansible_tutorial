@@ -1,7 +1,8 @@
-[servers:vars]
-ansible_python_interpreter=/usr/bin/python3
-
-[servers]
+[web_servers]
 192.168.0.201 
+
+[file_servers]
 192.168.0.202
+
+[db_servers]
 192.168.0.203

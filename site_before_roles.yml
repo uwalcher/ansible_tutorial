@@ -1,0 +1,79 @@
+---
+
+- hosts: all
+  become: true
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+  pre_tasks:
+
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: add ssh key for simone
+    tags: always
+    authorized_key:
+      user: simone
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGRwC67ePBxhaikUURXfVv4sqhU0Rabr2pRfbFix7sek ansible"
+
+  - name: install update (CentOS)
+    tags: always
+    dnf:
+      update_only: yes
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "CentOS"
+
+  - name: install update (Ubuntu)
+    tags: Ubuntu
+    apt:
+      upgrade: dist
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: web_servers
+  become: true
+  tasks:
+
+  - name: install apache and php package
+    tags: apache,apache2,ubuntu
+    apt:
+      name:
+        - apache2
+        # - "{{ apache_package }}"
+        - libapache2-mod-php
+        # - "{{ php_package }}"
+      state: latest
+
+  - name: copy default html file for site
+    tags: apache,apache,htttpd
+    copy:
+      src: default_site.html
+      dest: /var/www/html/index.html
+      owner: root
+      group: root
+      mode: 0644
+
+- hosts: db_servers
+  become: true
+  tasks:
+  
+  - name: Install mariadb package
+    tags: ubuntu,db,mariadb
+    apt:
+      name: mariadb-server
+      state: latest
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: file_servers
+  become: true
+  tasks:
+  
+  - name: Install mariadb package
+    tags: samba
+    apt:
+      name: samba
+      state: latest
+    when: ansible_distribution == "Ubuntu"
